@@ -1,16 +1,19 @@
 {
-  "name": "backport",
+  "name": "npmbuild",
   "version": "1.0.0",
-  "description": "A probot app that tries to do automatic backports",
+  "description": "A probot app that tries to compile npm assets and commit",
   "author": "Roeland Jago Douma <roeland@famdouma.nl> (https://rullzer.com)",
   "license": "ISC",
-  "repository": "https://github.com//backport.git",
-  "homepage": "https://github.com//backport",
-  "bugs": "https://github.com//backport/issues",
+  "repository": "https://github.com/skjnldsv/npmbuildbot.git",
+  "homepage": "https://github.com/skjnldsv/npmbuildbot",
+  "bugs": "https://github.com/skjnldsv/npmbuildbot/issues",
   "keywords": [
     "probot",
     "github",
-    "probot-app"
+    "probot-app",
+    "npm",
+    "compile",
+    "build"
   ],
   "scripts": {
     "dev": "nodemon",
@@ -22,6 +25,7 @@
   "dependencies": {
     "fs-extra": "^7.0.1",
     "github-app": "^4.0.1",
+    "global-npm": "^0.3.0",
     "probot": "^7.5.1",
     "simple-git": "^1.107.0"
   },
