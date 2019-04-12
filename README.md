@@ -1,6 +1,6 @@
 # backport
 
-> A GitHub App built with [Probot](https://github.com/probot/probot) that A probot app that tries to do automatic backports
+> A GitHub App built with [Probot](https://github.com/probot/probot) that A probot app that tries to compile npm assets and commit
 
 ## Setup
 
@@ -20,4 +20,4 @@ For more, check out the [Contributing Guide](CONTRIBUTING.md).
 
 ## License
 
-[ISC](LICENSE) © 2018 Roeland Jago Douma <roeland@famdouma.nl> (https://rullzer.com)
+[ISC](LICENSE) © 2019 John Molakvoæ <skjnldsv@protonmail.com>
