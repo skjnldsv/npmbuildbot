@@ -1,72 +1,53 @@
 const pr = require('./lib/pr.js')
 const comment = require('./lib/comment.js')
-const backport = require('./lib/backport.js')
+const git = require('./lib/git.js')
+const compile = require('./lib/compile.js')
+const getToken = require('./lib/token.js')
 
 module.exports = app => {
-  app.on('issue_comment.created', async context => {
-    const payload = context.payload
+	app.on('issue_comment.created', async context => {
+		const payload = context.payload
 
-    if (!payload.issue.html_url.endsWith('pull/' + payload.issue.number)) {
-      // Ignore normal issues
-      app.log("NOT A PR!")
-      return
-    }
+		if (!payload.issue.html_url.endsWith('pull/' + payload.issue.number)) {
+			// Ignore normal issues
+			app.log('NOT A PR!')
+			return
+		}
 
-    const target = comment.match(payload.comment.body);
-    if (target === false) {
-      app.log('Ignore')
-      return;
-    }
+		const path = comment.match(payload.comment.body)
+		if (path === false) {
+			app.log('Ignore')
+			return
+		}
 
-    comment.plusOne(context, payload.comment.id)
-    pr.addLabels(context, ['backport-request'], context.issue().number)
+		comment.plusOne(context, payload.comment.id)
 
-    if (!(await pr.isMerged(context, payload.issue.number))) {
-      app.log("PR is not yet merged just carry on")
-      return
-    }
+		if (await pr.isMerged(context, payload.issue.number)) {
+		  app.log('PR is already merged just carry on')
+		  return
+		}
 
-    const success = await backport(context, context.issue.number, [target])
 
-    if (success) {
-      pr.removeBackportRequestLabel(context)
-    }
-  })
+		const token = await getToken(context.payload.installation.id)
+		const branch = await pr.getBranch(context)
+		app.log(`Starting on branch ${branch} for path /${path}`)
 
-  app.on('pull_request.closed', async context => {
-    const params = context.issue()
-    const comments  = await context.github.issues.listComments(params)
+		const gitRoot = await git.cloneAndCheckout(context, token, branch)
+		if (!gitRoot) {
+			app.log('Error during the git initialisation')
+			return
+		}
 
-    // Obtain all targets
-    let targets = []
-    for (const {body, id} of comments.data) {
-      const target = comment.match(body)
-      if (target !== false) {
-        targets.push(target)
+		console.info('compiling');
+		await compile(gitRoot)
 
-        comment.plusOne(context, id)
-        pr.addLabels(context, ['backport-request'], params.number)
-      }
-    }
+		console.info('committing');
+		const success = await git.commitAndPush(context, path, branch, token, gitRoot)
 
-    if (targets.length === 0) {
-      app.log('Nothing to backport')
-      return
-    }
-
-    const thisPR = await context.github.pullRequests.get(params)
-    if (!thisPR.data.merged) {
-      app.log('PR is not merged, but closed')
-      return
-    }
-
-    //TODO filter same backport requests
-
-    app.log(targets)
-    const success = await backport(context, context.issue.number, targets)
-    
-    if (success) {
-      pr.removeBackportRequestLabel(context)
-    }
-  })
+		if (success) {
+			app.log(`Successfully pushed commit ${success} to branch ${branch}`)
+		} else {
+			app.log(`Commit NOT pushed to branch ${branch}`)
+		}
+	})
 }
