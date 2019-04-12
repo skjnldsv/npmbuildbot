@@ -32,16 +32,17 @@ module.exports = app => {
 		const branch = await pr.getBranch(context)
 		app.log(`Starting on branch ${branch} for path /${path}`)
 
+		// cloning
 		const gitRoot = await git.cloneAndCheckout(context, token, branch)
 		if (!gitRoot) {
 			app.log('Error during the git initialisation')
 			return
 		}
 
-		console.info('compiling');
+		// compiling app
 		await compile(gitRoot)
 
-		console.info('committing');
+		// commit and push
 		const success = await git.commitAndPush(context, path, branch, token, gitRoot)
 
 		if (success) {
