@@ -1,6 +1,6 @@
 {
   "name": "npmbuildbot",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A probot app that tries to compile npm assets and commit",
   "author": "John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>",
   "license": "ISC",
