@@ -37,7 +37,7 @@ module.exports = app => {
 		}
 
 		// 2. command syntax checks
-		if (!command.arguments.startsWith('/')) {
+		if (!command.arguments || !command.arguments.startsWith('/')) {
 			logger.debug('Path does not start with a /')
 			comment.confused(context, payload.comment.id)
 			deny(repo, number)
