@@ -1,40 +1,55 @@
 {
-  "name": "probot-stale",
-  "version": "1.1.0",
-  "description": "A GitHub App built with Probot that closes abandoned Issues and Pull Requests after a period of inactivity.",
-  "author": "Brandon Keepers",
+  "name": "npmbuild",
+  "version": "1.0.0",
+  "description": "A probot app that tries to compile npm assets and commit",
+  "author": "Roeland Jago Douma <roeland@famdouma.nl> (https://rullzer.com)",
   "license": "ISC",
-  "homepage": "https://probot.github.io/apps/stale/",
-  "bugs": "https://github.com/probot/stale/issues",
+  "repository": "https://github.com/skjnldsv/npmbuildbot.git",
+  "homepage": "https://github.com/skjnldsv/npmbuildbot",
+  "bugs": "https://github.com/skjnldsv/npmbuildbot/issues",
   "keywords": [
     "probot",
     "github",
-    "probot-app"
+    "probot-app",
+    "npm",
+    "compile",
+    "build"
   ],
-  "repository": "https://github.com/probot/stale",
   "scripts": {
+    "dev": "nodemon",
     "start": "probot run ./index.js",
-    "test": "jest && standard"
+    "lint": "standard --fix",
+    "test": "jest && standard",
+    "test:watch": "jest --watch --notify --notifyMode=change --coverage"
   },
   "dependencies": {
-    "joi": "^14.0.0",
-    "newrelic": "^5.2.1",
-    "probot": "7.3.1",
-    "probot-config": "^0.1.0",
-    "probot-scheduler": "^1.0.2"
-  },
-  "engines": {
-    "node": "^8.9",
-    "npm": "^5.6"
+    "fs-extra": "^7.0.1",
+    "github-app": "^4.0.1",
+    "global-npm": "^0.3.0",
+    "probot": "^7.5.1",
+    "simple-git": "^1.110.0",
+    "probot-commands": "^1.1.0"
   },
   "devDependencies": {
-    "jest": "^22.2.2",
-    "smee-client": "^1.0.1",
+    "jest": "^24.7.1",
+    "nock": "^10.0.6",
+    "nodemon": "^1.18.11",
+    "smee-client": "^1.1.0",
     "standard": "^12.0.1"
+  },
+  "engines": {
+    "node": ">= 8.3.0"
   },
   "standard": {
     "env": [
       "jest"
+    ]
+  },
+  "nodemonConfig": {
+    "exec": "npm start",
+    "watch": [
+      ".env",
+      "."
     ]
   },
   "jest": {
