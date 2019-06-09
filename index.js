@@ -10,7 +10,7 @@ module.exports = app => {
 
 	const deny = (repo, number) => {
 		logger.info(`Invalid request: ${repo}#${number}`)
-  }
+	}
 
 	commands(app, 'compile', async (context, command) => {
 		
@@ -23,29 +23,29 @@ module.exports = app => {
 			// Ignore normal issues
 			logger.debug('This is not a PR')
 			deny(repo, number)
-		  comment.minusOne(context, payload.comment.id)
+			comment.minusOne(context, payload.comment.id)
 			return
 		}
-    const isMerged = await pr.isMerged(context, payload.issue.number)
-    const isClosed = await pr.isClosed(context, payload.issue.number)
+		const isMerged = await pr.isMerged(context, payload.issue.number)
+		const isClosed = await pr.isClosed(context, payload.issue.number)
 		if (isMerged || isClosed) {
-      // should not be merged
+			// should not be merged
 			logger.debug('PR is already merged or closed just carry on')
 			deny(repo, number)
-		  comment.minusOne(context, payload.comment.id)
+			comment.minusOne(context, payload.comment.id)
 			return
 		}
 
 		// 2. command syntax checks
 		if (!command.arguments.startsWith('/')) {
 			logger.debug('Path does not start with a /')
-		  comment.confused(context, payload.comment.id)
+			comment.confused(context, payload.comment.id)
 			deny(repo, number)
 			return
 		}
 		if (command.arguments.trim().indexOf(' ') > -1) {
 			logger.debug('Path contains spaces')
-		  comment.confused(context, payload.comment.id)
+			comment.confused(context, payload.comment.id)
 			deny(repo, number)
 			return
 		}
@@ -74,11 +74,13 @@ module.exports = app => {
 
 		if (success) {
 			logger.info(`Successfully pushed commit ${success} to branch ${branch} on ${repo}#${number}`)
-		  comment.rocket(context, payload.comment.id)
+			// ! waiting for official octokit support of rocket
+			// ! https://github.com/octokit/rest.js/pull/1393
+			// comment.rocket(context, payload.comment.id)
 		} else {
 			logger.debug(`The provided path ${path} does not contain any changes to commit`)
 			deny(repo, number)
-		  comment.confused(context, payload.comment.id)
+			comment.confused(context, payload.comment.id)
 		}
 	})
 }
