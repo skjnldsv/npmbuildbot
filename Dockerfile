@@ -4,5 +4,5 @@ WORKDIR /app
 COPY package* /app/
 RUN npm install --production
 COPY . /app/
-EXPOSE 8080
+EXPOSE 3000
 ENTRYPOINT [ "npx",  "probot", "run", "./index.js" ]
