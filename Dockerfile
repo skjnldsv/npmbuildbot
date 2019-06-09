@@ -1,8 +1,9 @@
-FROM node:11
+FROM node:10
 
 WORKDIR /app
-COPY package* /app/
+COPY package* ./
 RUN npm install --production
-COPY . /app/
-EXPOSE 3000
-ENTRYPOINT [ "npx",  "probot", "run", "./index.js" ]
+COPY . .
+
+ENTRYPOINT ["/app/node_modules/.bin/probot", "receive"]
+CMD ["/app/src/index.js"]
