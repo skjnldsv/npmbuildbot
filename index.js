@@ -26,8 +26,8 @@ module.exports = app => {
 			comment.minusOne(context, payload.comment.id)
 			return
 		}
-		const isMerged = await pr.isMerged(context, payload.issue.number)
-		const isClosed = await pr.isClosed(context, payload.issue.number)
+		const isMerged = await pr.isMerged(context)
+		const isClosed = await pr.isClosed(context)
 		if (isMerged || isClosed) {
 			// should not be merged
 			logger.debug('PR is already merged or closed just carry on')
