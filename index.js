@@ -1,54 +1,66 @@
-const pr = require('./lib/pr.js')
-const comment = require('./lib/comment.js')
-const git = require('./lib/git.js')
-const compile = require('./lib/compile.js')
-const getToken = require('./lib/token.js')
+require('newrelic')
 
-module.exports = app => {
-	app.on('issue_comment.created', async context => {
-		const payload = context.payload
+const getConfig = require('probot-config')
+const createScheduler = require('probot-scheduler')
+const Stale = require('./lib/stale')
 
-		if (!payload.issue.html_url.endsWith('pull/' + payload.issue.number)) {
-			// Ignore normal issues
-			app.log('NOT A PR!')
-			return
-		}
+module.exports = async app => {
+  // Visit all repositories to mark and sweep stale issues
+  const scheduler = createScheduler(app)
 
-		const path = comment.match(payload.comment.body)
-		if (path === false) {
-			app.log('Ignore')
-			return
-		}
+  // Unmark stale issues if a user comments
+  const events = [
+    'issue_comment',
+    'issues',
+    'pull_request',
+    'pull_request_review',
+    'pull_request_review_comment'
+  ]
 
-		comment.plusOne(context, payload.comment.id)
+  app.on(events, unmark)
+  app.on('schedule.repository', markAndSweep)
 
-		if (await pr.isMerged(context, payload.issue.number)) {
-		  app.log('PR is already merged just carry on')
-		  return
-		}
+  async function unmark (context) {
+    if (!context.isBot) {
+      const stale = await forRepository(context)
+      let issue = context.payload.issue || context.payload.pull_request
+      const type = context.payload.issue ? 'issues' : 'pulls'
 
+      // Some payloads don't include labels
+      if (!issue.labels) {
+        try {
+          issue = (await context.github.issues.get(context.issue())).data
+        } catch (error) {
+          context.log('Issue not found')
+        }
+      }
 
-		const token = await getToken(context.payload.installation.id)
-		const branch = await pr.getBranch(context)
-		app.log(`Starting on branch ${branch} for path /${path}`)
+      const staleLabelAdded = context.payload.action === 'labeled' &&
+        context.payload.label.name === stale.config.staleLabel
 
-		// cloning
-		const gitRoot = await git.cloneAndCheckout(context, token, branch)
-		if (!gitRoot) {
-			app.log('Error during the git initialisation')
-			return
-		}
+      if (stale.hasStaleLabel(type, issue) && issue.state !== 'closed' && !staleLabelAdded) {
+        stale.unmarkIssue(type, issue)
+      }
+    }
+  }
 
-		// compiling app
-		await compile(gitRoot)
+  async function markAndSweep (context) {
+    const stale = await forRepository(context)
+    await stale.markAndSweep('pulls')
+    await stale.markAndSweep('issues')
+  }
 
-		// commit and push
-		const success = await git.commitAndPush(context, path, branch, token, gitRoot)
+  async function forRepository (context) {
+    let config = await getConfig(context, 'stale.yml')
 
-		if (success) {
-			app.log(`Successfully pushed commit ${success} to branch ${branch}`)
-		} else {
-			app.log(`Commit NOT pushed to branch ${branch}`)
-		}
-	})
+    if (!config) {
+      scheduler.stop(context.payload.repository)
+      // Don't actually perform for repository without a config
+      config = { perform: false }
+    }
+
+    config = Object.assign(config, context.repo({ logger: app.log }))
+
+    return new Stale(context.github, config)
+  }
 }
