@@ -1,6 +1,6 @@
-# backport
+# npmbuildbot
 
-> A GitHub App built with [Probot](https://github.com/probot/probot) that A probot app that tries to compile npm assets and commit
+> A GitHub App built with [Probot](https://github.com/probot/probot) that A probot app that tries to compile npm assets and commit them
 
 ## Setup
 
