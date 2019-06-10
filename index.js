@@ -7,6 +7,7 @@ const commands = require('probot-commands')
 
 const os = require('os')
 const path = require('path')
+const fs = require('fs-extra')
 
 module.exports = app => {
 	const logger = app.log
