@@ -63,12 +63,12 @@ module.exports = app => {
 		}
 
 		// all clear! Go go go!
-		const path = command.arguments.trim().substr(1)
+		const buildPath = command.arguments.trim().substr(1)
 		comment.plusOne(context, payload.comment.id)
 
 		const token = await getToken(context.payload.installation.id)
 		const branch = await pr.getBranch(context)
-		logger.info(`Starting branch ${branch} with path /${path} on ${repo}#${number}`)
+		logger.info(`Starting branch ${branch} with path /${buildPath} on ${repo}#${number}`)
 
 		// 3. cloning
 		const gitStatus = await git.cloneAndCheckout(context, token, branch, logger)
@@ -82,7 +82,7 @@ module.exports = app => {
 		await compile(gitRoot, logger)
 
 		// 5. commit and push
-		const success = await git.commitAndPush(path, branch, gitRoot, logger)
+		const success = await git.commitAndPush(buildPath, branch, gitRoot, logger)
 
 		if (success) {
 			logger.info(`Successfully pushed commit ${success} to branch ${branch} on ${repo}#${number}`)
@@ -90,7 +90,7 @@ module.exports = app => {
 			// ! https://github.com/octokit/rest.js/pull/1393
 			// comment.rocket(context, payload.comment.id)
 		} else {
-			logger.debug(`The provided path ${path} does not contain any changes to commit`)
+			logger.debug(`The provided path ${buildPath} does not contain any changes to commit`)
 			deny(repo, number)
 			comment.confused(context, payload.comment.id)
 		}
