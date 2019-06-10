@@ -12,7 +12,7 @@ const fs = require('fs-extra')
 module.exports = app => {
 	const logger = app.log
 
-	const deny = (repo, number) => {
+	const deny = (repo, number, gitRoot) => {
 		logger.info(`Invalid request: ${repo}#${number}`)
 		// cleanup tmp folder
 		try {
@@ -35,7 +35,7 @@ module.exports = app => {
 		if (!payload.issue.html_url.endsWith('pull/' + payload.issue.number)) {
 			// Ignore normal issues
 			logger.debug('This is not a PR')
-			deny(repo, number)
+			deny(repo, number, gitRoot)
 			comment.minusOne(context, payload.comment.id)
 			return
 		}
@@ -44,7 +44,7 @@ module.exports = app => {
 		if (isMerged || isClosed) {
 			// should not be merged
 			logger.debug('PR is already merged or closed just carry on')
-			deny(repo, number)
+			deny(repo, number, gitRoot)
 			comment.minusOne(context, payload.comment.id)
 			return
 		}
@@ -53,13 +53,13 @@ module.exports = app => {
 		if (!command.arguments || !command.arguments.startsWith('/')) {
 			logger.debug('Path does not start with a /')
 			comment.confused(context, payload.comment.id)
-			deny(repo, number)
+			deny(repo, number, gitRoot)
 			return
 		}
 		if (command.arguments.trim().indexOf(' ') > -1) {
 			logger.debug('Path contains spaces')
 			comment.confused(context, payload.comment.id)
-			deny(repo, number)
+			deny(repo, number, gitRoot)
 			return
 		}
 
@@ -75,7 +75,7 @@ module.exports = app => {
 		const gitStatus = await git.cloneAndCheckout(context, token, branch, logger)
 		if (!gitStatus) {
 			logger.debug('Error during the git initialisation')
-			deny(repo, number)
+			deny(repo, number, gitRoot)
 			return
 		}
 
@@ -92,7 +92,7 @@ module.exports = app => {
 			// comment.rocket(context, payload.comment.id)
 		} else {
 			logger.debug(`The provided path ${buildPath} does not contain any changes to commit`)
-			deny(repo, number)
+			deny(repo, number, gitRoot)
 			comment.confused(context, payload.comment.id)
 		}
 	})
