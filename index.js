@@ -5,14 +5,26 @@ const compile = require('./lib/compile.js')
 const getToken = require('./lib/token.js')
 const commands = require('probot-commands')
 
+const os = require('os')
+const path = require('path')
+
 module.exports = app => {
 	const logger = app.log
 
 	const deny = (repo, number) => {
 		logger.info(`Invalid request: ${repo}#${number}`)
+		// cleanup tmp folder
+		try {
+			fs.remove(gitRoot)
+		} catch(error) {
+			logger.debug(error)
+		}
 	}
 
 	commands(app, 'compile', async (context, command) => {
+		// Get a clean folder
+		const prefix = path.resolve(os.tmpdir(), 'npmbuildbot-')
+		const gitRoot = await fs.mkdtemp(prefix)
 		
 		const payload = context.payload
 		const repo = payload.repository.full_name
@@ -59,8 +71,8 @@ module.exports = app => {
 		logger.info(`Starting branch ${branch} with path /${path} on ${repo}#${number}`)
 
 		// 3. cloning
-		const gitRoot = await git.cloneAndCheckout(context, token, branch, logger)
-		if (!gitRoot) {
+		const gitStatus = await git.cloneAndCheckout(context, token, branch, logger)
+		if (!gitStatus) {
 			logger.debug('Error during the git initialisation')
 			deny(repo, number)
 			return
