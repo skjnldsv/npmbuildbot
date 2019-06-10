@@ -72,7 +72,7 @@ module.exports = app => {
 		logger.info(`Starting branch ${branch} with path /${buildPath} on ${repo}#${number}`)
 
 		// 3. cloning
-		const gitStatus = await git.cloneAndCheckout(context, token, branch, logger)
+		const gitStatus = await git.cloneAndCheckout(context, token, branch, logger, gitRoot)
 		if (!gitStatus) {
 			logger.debug('Error during the git initialisation')
 			deny(repo, number, gitRoot)
