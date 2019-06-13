@@ -7,13 +7,13 @@
 
 ## Setup
 
-```sh
-# Install dependencies
-npm install
-
-# Run the bot
-npm start
-```
+1. create a github app
+2. generate a webhook secret `openssl rand -base64 32`
+3. generate a private key
+4. replace the data by yours in the `docker-compose.yml` file
+5. replace the content of the fake private key `private-key.pem` by yours
+6. run the bot `docker-compose up` (`-d` to run in background)
+7. put your direct url access to your bot in your github app config
 
 ## Contributing
 
