@@ -1,3 +1,6 @@
+![Docker Automated build](https://img.shields.io/docker/cloud/automated/skjnldsv/npmbuildbot.svg?style=flat-square)
+![Docker Automated build](https://img.shields.io/docker/cloud/build/skjnldsv/npmbuildbot.svg?style=flat-square)
+![github app command](https://img.shields.io/badge/command-%2Fcompile%20%2Fpath%2Fto%2Fcompiled%2Fassets-red.svg?style=flat-square&logo=github)
 # npmbuildbot
 
 > A GitHub App built with [Probot](https://github.com/probot/probot) that A probot app that tries to compile npm assets and commit them
