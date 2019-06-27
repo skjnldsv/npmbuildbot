@@ -49,12 +49,24 @@ module.exports = app => {
 			return
 		}
 
-		// 2. command syntax checks
+		// 2.1 command action checks
+		const action = command.arguments.startsWith('amend')
+			? 'amend'
+			: command.arguments.startsWith('fixup')
+				? 'fixup'
+				: false
+		if (action) {
+			command.arguments = command.arguments.replace(/^(amend|fixup) /i, '')
+		}
+
+		// 2.2 command syntax checks
 		if (!command.arguments || !command.arguments.startsWith('/')) {
-			logger.debug('Path does not start with a /')
-			comment.confused(context, payload.comment.id)
-			deny(repo, number, gitRoot)
-			return
+			if (!action) {
+				logger.debug('Path does not start with a / nor does it contain the fixup or amend parametter')
+				comment.confused(context, payload.comment.id)
+				deny(repo, number, gitRoot)
+				return
+			}
 		}
 		if (command.arguments.trim().indexOf(' ') > -1) {
 			logger.debug('Path contains spaces')
@@ -79,18 +91,23 @@ module.exports = app => {
 			return
 		}
 
-		// 4. compiling app
-		await compile(gitRoot, logger)
+		let success = false;
+		try {
+			// 4. compiling app
+			await compile(gitRoot, logger)
 
-		// 5. commit and push
-		const success = await git.commitAndPush(buildPath, branch, gitRoot, logger)
+			// 5. commit and push
+			success = await git.commitAndPush(buildPath, branch, gitRoot, logger, action)
+			if (success) {
+				logger.info(`Successfully pushed commit ${success} to branch ${branch} on ${repo}#${number}`)
+				// ! waiting for official octokit support of rocket
+				// ! https://github.com/octokit/rest.js/pull/1393
+				// comment.rocket(context, payload.comment.id)
+			}
+		} catch(e) {}
 
-		if (success) {
-			logger.info(`Successfully pushed commit ${success} to branch ${branch} on ${repo}#${number}`)
-			// ! waiting for official octokit support of rocket
-			// ! https://github.com/octokit/rest.js/pull/1393
-			// comment.rocket(context, payload.comment.id)
-		} else {
+		// error, closing the process :(
+		if (!success) {
 			logger.debug(`The provided path ${buildPath} does not contain any changes to commit`)
 			deny(repo, number, gitRoot)
 			comment.confused(context, payload.comment.id)
