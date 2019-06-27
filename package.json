@@ -22,9 +22,9 @@
   "dependencies": {
     "fs-extra": "^8.0.1",
     "github-app": "^4.0.1",
-    "probot": "^9.2.13",
+    "probot": "^9.2.15",
     "probot-commands": "^1.1.0",
-    "simple-git": "^1.113.0"
+    "simple-git": "^1.116.0"
   },
   "devDependencies": {
     "smee-client": "^1.1.0"
