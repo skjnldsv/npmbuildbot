@@ -107,7 +107,7 @@ module.exports = app => {
 		} catch(e) {}
 
 		// error, closing the process :(
-		if (!success) {
+		if (success === false) {
 			logger.debug(`The provided path ${buildPath} does not contain any changes to commit`)
 			deny(repo, number, gitRoot)
 			comment.confused(context, payload.comment.id)
