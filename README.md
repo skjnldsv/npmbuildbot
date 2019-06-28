@@ -1,9 +1,15 @@
 ![Docker Automated build](https://img.shields.io/docker/cloud/automated/skjnldsv/npmbuildbot.svg?style=flat-square&logo=docker)
 ![Docker Automated build](https://img.shields.io/docker/cloud/build/skjnldsv/npmbuildbot.svg?style=flat-square&logo=docker)
 ![github app command](https://img.shields.io/badge/command-%2Fcompile%20%2Fpath%2Fto%2Fcompiled%2Fassets-red.svg?style=flat-square&logo=github)
+![github amend command](https://img.shields.io/badge/command-%2Fcompile%20amend%20%2Fpath%2Fto%2Fcompiled%2Fassets-red.svg?style=flat-square&logo=github)
+![github fixup command](https://img.shields.io/badge/command-%2Fcompile%20fixup%20%2Fpath%2Fto%2Fcompiled%2Fassets-red.svg?style=flat-square&logo=github)
 # npmbuildbot
 
-> A GitHub App built with [Probot](https://github.com/probot/probot) that A probot app that tries to compile npm assets and commit them
+A GitHub App built with [Probot](https://github.com/probot/probot) that A probot app that tries to compile npm assets and commit them
+- You can request a compilation and the bot will compile and try to add the requested path if it contains changes, this will create a new commit.
+- You can also request a `fixup` that will add a new fixup commit for the previous one (`HEAD`). 
+- Finally, you can also request an amend commit and it will force push to your branch.
+
 
 ## Setup
 
