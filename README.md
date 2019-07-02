@@ -6,7 +6,7 @@ A GitHub App built with [Probot](https://github.com/probot/probot) that A probot
 - You can also request a `fixup` that will add a new fixup commit for the previous one (`HEAD`). 
 - Finally, you can also request an amend commit and it will force push to your branch.
 
-# Commands
+## Commands
 - `/compile /path/to/add` Compile and create a new commit with the compiled files
 - `/compile amend /path/to/add` Compile and amend the previous commit with the compiled files
 - `/compile fixup /path/to/add` Compile and create a new fixup commit with the compiled files
