@@ -1,8 +1,6 @@
 ![Docker Automated build](https://img.shields.io/docker/cloud/automated/skjnldsv/npmbuildbot.svg?style=flat-square&logo=docker)
 ![Docker Automated build](https://img.shields.io/docker/cloud/build/skjnldsv/npmbuildbot.svg?style=flat-square&logo=docker)
 
-# npmbuildbot
-
 A GitHub App built with [Probot](https://github.com/probot/probot) that A probot app that tries to compile npm assets and commit them
 - You can request a compilation and the bot will compile and try to add the requested path if it contains changes, this will create a new commit.
 - You can also request a `fixup` that will add a new fixup commit for the previous one (`HEAD`). 
