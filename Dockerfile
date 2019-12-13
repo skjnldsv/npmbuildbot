@@ -1,4 +1,6 @@
-FROM node:lts
+FROM nextcloudci/node:node-7
+
+RUN apk add python
 
 WORKDIR /app
 COPY . .
