@@ -24,7 +24,7 @@
     "github-app": "^4.0.1",
     "probot": "^9.9.0",
     "probot-commands": "^1.1.0",
-    "simple-git": "^1.128.0"
+    "simple-git": "^1.129.0"
   },
   "devDependencies": {
     "smee-client": "^1.1.0"
