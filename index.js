@@ -26,7 +26,7 @@ module.exports = app => {
 		// Get a clean folder
 		const prefix = path.resolve(os.tmpdir(), 'npmbuildbot-')
 		const gitRoot = await fs.mkdtemp(prefix)
-		
+
 		const payload = context.payload
 		const repo = payload.repository.full_name
 		const number = payload.issue.number
@@ -81,10 +81,11 @@ module.exports = app => {
 
 		const token = await getToken(context.payload.installation.id)
 		const branch = await pr.getBranch(context)
+		const headSlug = await pr.getHeadSlug(context)
 		logger.info(`Starting branch ${branch} with path /${buildPath} on ${repo}#${number}`)
 
 		// 3. cloning
-		const gitStatus = await git.cloneAndCheckout(context, token, branch, logger, gitRoot)
+		const gitStatus = await git.cloneAndCheckout(context, token, branch, headSlug, logger, gitRoot)
 		if (!gitStatus) {
 			logger.debug('Error during the git initialisation')
 			deny(repo, number, gitRoot)
