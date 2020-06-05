@@ -20,7 +20,7 @@
     "start": "probot run ./index.js"
   },
   "dependencies": {
-    "fs-extra": "^9.0.0",
+    "fs-extra": "^9.0.1",
     "github-app": "^4.0.1",
     "probot": "^9.11.3",
     "probot-commands": "^1.1.0",
