@@ -22,7 +22,7 @@
   "dependencies": {
     "fs-extra": "^9.0.1",
     "github-app": "^4.0.1",
-    "probot": "^9.15.1",
+    "probot": "^10.9.0",
     "probot-commands": "^1.1.0",
     "simple-git": "^2.20.1"
   },
