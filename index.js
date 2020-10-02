@@ -97,21 +97,22 @@ module.exports = app => {
 			// 4. compiling app
 			await compile(gitRoot, logger)
 
-			// 5. commit and push
+			// 5. commit, push and cleanup
 			success = await git.commitAndPush(buildPath, branch, gitRoot, logger, action)
-			if (success) {
-				logger.info(`Successfully pushed commit ${success} to branch ${branch} on ${repo}#${number}`)
-				// ! waiting for official octokit support of rocket
-				// ! https://github.com/octokit/rest.js/pull/1393
-				// comment.rocket(context, payload.comment.id)
-			}
-		} catch(e) {}
-
-		// error, closing the process :(
-		if (success === false) {
-			logger.debug(`The provided path /${buildPath} does not contain any changes to commit`)
-			deny(repo, number, gitRoot)
-			comment.confused(context, payload.comment.id)
+		} catch(e) {
+			logger.debug(e)
+			logger.error('Error during the compiling or the committing phase')
+			return
 		}
+
+		if (success) {
+			logger.info(`Successfully pushed commit to branch ${branch} on ${repo}#${number}`)
+			return
+		}
+
+		// 6. finish failed process
+		logger.warn(`The provided path /${buildPath} does not contain any changes to commit`)
+		deny(repo, number, gitRoot)
+		comment.confused(context, payload.comment.id)
 	})
 }
