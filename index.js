@@ -102,6 +102,7 @@ module.exports = app => {
 		} catch(e) {
 			logger.debug(e)
 			logger.error('Error during the compiling or the committing phase')
+			comment.minusOne(context, payload.comment.id)
 			return
 		}
 
