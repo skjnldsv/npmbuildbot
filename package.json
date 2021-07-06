@@ -3,6 +3,16 @@
   "version": "1.0.5",
   "description": "A probot app that tries to compile npm assets and commit",
   "author": "John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>",
+  "contributors": [
+    {
+      "name": "John Molakvoæ (skjnldsv)",
+      "email": "skjnldsv@protonmail.com"
+    },
+    {
+      "name": "Christopher Ng",
+      "email": "chrng8@gmail.com"
+    }
+  ],
   "license": "ISC",
   "repository": "https://github.com/skjnldsv/npmbuildbot.git",
   "homepage": "https://github.com/skjnldsv/npmbuildbot",
